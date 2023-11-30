@@ -7,6 +7,7 @@ import configArcoStyleImportPlugin from './plugin/arcoStyleImport';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    base: './',
     plugins: [
         vue(),
         vueJsx(),
