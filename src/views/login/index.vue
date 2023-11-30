@@ -18,11 +18,32 @@
 </template>
 
 <script lang="ts" setup>
+import { ref, onMounted, onUnmounted } from 'vue';
 import Footer from '@/components/footer/index.vue';
 import LoginBanner from './components/banner.vue';
 import LoginForm from './components/login-form.vue';
 import { projectConfig } from '@/config/project';
 import LogoSvg from '@/assets/logo.svg?url';
+
+const widthMode = ref<'lg' | 'md'>('lg');
+const mediaQueryHandler = (e: MediaQueryListEvent) => {
+    widthMode.value  = e.matches ? 'md' :'lg';
+};
+/**
+ * # 中等屏幕
+ * ---
+ * 见src\assets\style\breakpoint.less
+ */
+const mediaQueryMd = window.matchMedia('(max-width: 768px)');
+
+onMounted(()=>{
+    mediaQueryMd.addEventListener('change', mediaQueryHandler);
+    widthMode.value = mediaQueryMd.matches ? 'md' :'lg';
+});
+
+onUnmounted(()=>{
+    mediaQueryMd.removeEventListener('change', mediaQueryHandler);
+});
 </script>
 
 <script lang="ts">
@@ -39,7 +60,8 @@ export default {
     height: 100vh;
 
     .banner {
-        width: 550px;
+        // width: 550px;
+        width: 55%;
         background: linear-gradient(163.85deg, #1d2129 0%, #00308f 100%);
     }
 
@@ -82,7 +104,23 @@ export default {
 @media (max-width: @screen-lg) {
     .container {
         .banner {
-            width: 25%;
+            width: 45%;
+            // 透明度
+            opacity: 1;
+        }
+    }
+}
+
+@media (max-width: @screen-md) {
+    .container {
+        .banner {
+            width: 0;
+            // display: none;
+            opacity: 0;
+        }
+
+        .logo .logo-text {
+            display: none;
         }
     }
 }

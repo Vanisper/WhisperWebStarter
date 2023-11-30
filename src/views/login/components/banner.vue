@@ -44,6 +44,8 @@ const carouselItem = computed(() => [
     display: flex;
     align-items: center;
     justify-content: center;
+    // 宽度变化过渡效果
+    transition: width 0.3s ease-in-out, opacity 0.2s ease-in-out;
 
     &-inner {
       flex: 1;
@@ -79,6 +81,9 @@ const carouselItem = computed(() => [
     &-image {
       width: 320px;
       margin-top: 30px;
+
+      -webkit-user-drag: none;
+      user-select: none;
     }
   }
 </style>
