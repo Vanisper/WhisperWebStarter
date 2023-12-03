@@ -12,6 +12,7 @@ const DASHBOARD: AppRouteRecordRaw = {
         icon: 'icon-dashboard',
         order: 0,
     },
+    redirect: PageEnum.WORKPLACE,
     children: [
         {
             path: PageEnum.WORKPLACE,

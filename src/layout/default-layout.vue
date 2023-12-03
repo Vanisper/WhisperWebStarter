@@ -9,12 +9,12 @@
                     :collapsed="collapsed" :collapsible="true" :width="menuWidth"
                     :style="{ paddingTop: navbar ? '60px' : '' }" :hide-trigger="true" @collapse="setCollapsed">
                     <div class="menu-wrapper">
-                        <Menu />
+                        <Menu detached="sub" />
                     </div>
                 </a-layout-sider>
                 <a-drawer v-if="hideMenu" :visible="drawerVisible" placement="left" :footer="false" mask-closable
                     :closable="false" @cancel="drawerCancel">
-                    <Menu />
+                    <Menu detached="sub" />
                 </a-drawer>
                 <a-layout class="layout-content" :style="paddingStyle">
                     <TabBar v-if="appStore.tabBar" />
@@ -51,7 +51,7 @@ const permission = usePermission();
 useResponsive(true);
 const navbarHeight = '60px';
 const navbar = computed(() => appStore.navbar);
-const renderMenu = computed(() => appStore.menu && !appStore.topMenu);
+const renderMenu = computed(() => appStore.menu && !appStore.topMenu && !(appStore.detachedMenu && route.meta.single));
 const hideMenu = computed(() => appStore.hideMenu);
 const footer = computed(() => appStore.footer);
 const menuWidth = computed(() => {
@@ -141,13 +141,13 @@ onMounted(() => {
 
     .tab-bar-container {
         margin: 5px;
+        margin-bottom: unset;
         border-radius: 4px;
         overflow: hidden;
     }
 
     .arco-layout-content {
         margin: 5px;
-        margin-top: unset;
         
         .layout-content-wrapper {
             background-color: var(--color-bg-2);

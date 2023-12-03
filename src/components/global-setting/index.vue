@@ -34,6 +34,7 @@ const contentOpts = computed(() => [
     { name: 'settings.navbar', key: 'navbar', defaultVal: appStore.navbar },
     { name: 'settings.menu', key: 'menu', defaultVal: appStore.menu },
     { name: 'settings.topMenu', key: 'topMenu', defaultVal: appStore.topMenu },
+    { title: '分离一级菜单', key: 'detachedMenu', defaultVal: appStore.detachedMenu },
     { name: 'settings.footer', key: 'footer', defaultVal: appStore.footer },
     { name: 'settings.tabBar', key: 'tabBar', defaultVal: appStore.tabBar },
     { name: 'settings.menuFromServer', key: 'menuFromServer', defaultVal: appStore.menuFromServer },

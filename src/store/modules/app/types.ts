@@ -6,6 +6,7 @@ export interface AppState {
     navbar: boolean;
     menu: boolean;
     topMenu: boolean;
+    detachedMenu: boolean; // 一级菜单是否独立显示在顶部
     hideMenu: boolean;
     menuCollapse: boolean;
     footer: boolean;

@@ -5,6 +5,7 @@
   "navbar": true,
   "menu": true,
   "topMenu": false,
+  "detachedMenu": false,
   "hideMenu": false,
   "menuCollapse": false,
   "footer": true,

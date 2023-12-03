@@ -20,7 +20,7 @@
       </a-space>
     </div>
     <div class="center-side">
-      <Menu v-if="topMenu" />
+      <Menu v-if="topMenu || detachedMenu" detached="top" />
     </div>
     <ul class="right-side">
       <li>
@@ -163,7 +163,7 @@
               </a-space>
             </a-doption>
             <a-doption>
-              <a-space @click="$router.push({ name: 'Info' })">
+              <a-space @click="$router.push({ name: '' })">
                 <icon-user />
                 <span>
                   {{ $t('messageBox.userCenter') }}
@@ -171,7 +171,7 @@
               </a-space>
             </a-doption>
             <a-doption>
-              <a-space @click="$router.push({ name: 'Setting' })">
+              <a-space @click="$router.push({ name: '' })">
                 <icon-settings />
                 <span>
                   {{ $t('messageBox.userSettings') }}
@@ -204,6 +204,7 @@ import useUser from '@/hooks/user';
 import Menu from '@/components/menu/index.vue';
 import MessageBox from '../message-box/index.vue';
 import LogoSvg from '@/assets/logo.svg?url';
+import AvatarPng from '@/assets/avatar.png?url';
 import projectConfig from '@/config/project';
 
 const appStore = useAppStore();
@@ -213,12 +214,13 @@ const { changeLocale, currentLocale } = useLocale();
 const { isFullscreen, toggle: toggleFullScreen } = useFullscreen();
 const locales = [...LOCALE_OPTIONS];
 const avatar = computed(() => {
-    return userStore.avatar;
+    return userStore.avatar || AvatarPng;
 });
 const theme = computed(() => {
     return appStore.theme;
 });
-const topMenu = computed(() => appStore.topMenu && appStore.menu);
+const topMenu = computed(() => !appStore.detachedMenu && appStore.topMenu && appStore.menu);
+const detachedMenu = computed(() => appStore.detachedMenu && appStore.menu);
 const isDark = useDark({
     selector: 'body',
     attribute: 'arco-theme',

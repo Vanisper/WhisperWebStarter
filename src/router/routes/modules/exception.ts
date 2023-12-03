@@ -18,6 +18,7 @@ const EXCEPTION: AppRouteRecordRaw = {
         icon: 'icon-exclamation-circle',
         order: 6,
     },
+    redirect: PageEnum.ERROR_PAGE_403,
     children: [
         {
             path: PageEnum.ERROR_PAGE_403,

@@ -11,6 +11,7 @@ const LISTDEMO: AppRouteRecordRaw = {
         title: '示例',
         order: -1,
     },
+    redirect: PageEnum.DEMO_LOGIN,
     children: [
         {
             path: PageEnum.DEMO_LOGIN,
