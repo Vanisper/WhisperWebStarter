@@ -9,7 +9,7 @@ import { AppState } from './types';
 import { AxiosError } from 'axios';
 
 const useAppStore = defineStore('app', {
-    persist: true,
+    persist: false,
     state: (): AppState => ({ ...defaultSettings }),
 
     getters: {
