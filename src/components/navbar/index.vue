@@ -2,15 +2,13 @@
   <div class="navbar">
     <div class="left-side">
       <a-space>
-        <img
-          alt="logo"
-          :src="LogoSvg"
-        />
+        <img alt="logo" :src="LogoSvg" style="width: 35px;height: 35px;" />
         <a-typography-title
           :style="{ margin: 0, fontSize: '18px', overflowWrap: 'unset', }"
           :heading="5"
+          class="logo-text"
         >
-          Web Starter
+          {{ projectConfig.name }}
         </a-typography-title>
         <icon-menu-fold
           v-if="!topMenu && appStore.device === 'mobile'"
@@ -315,6 +313,12 @@ const toggleDrawerMenu = inject('toggleDrawerMenu') as () => void;
     }
     .trigger-btn {
       margin-left: 14px;
+    }
+  }
+
+  @media (max-width: @screen-md) {
+    .logo-text {
+      display: none;
     }
   }
 </style>
