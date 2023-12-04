@@ -3,9 +3,11 @@
         <a-affix ref="affixRef" :offset-top="offsetTop">
             <div class="tab-bar-box">
                 <div class="tab-bar-scroll">
-                    <div class="tags-wrap">
+                    <IconCaretLeft class="scroll-left" @click="horizontalScrolling?.stepLeft(50)" :style="{ 'display': horizontalScrolling?.isOverflow ? 'block' : 'none' }" />
+                    <div ref="tagsWrapRef" class="tags-wrap">
                         <tab-item v-for="(tag, index) in tagList" :key="tag.fullPath" :index="index" :item-data="tag" />
                     </div>
+                    <IconCaretRight class="scroll-right" @click="horizontalScrolling?.stepRight(50)"  :style="{ 'display': horizontalScrolling?.isOverflow ? 'block' : 'none' }"  />
                 </div>
                 <div class="tag-bar-operation"></div>
             </div>
@@ -14,13 +16,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, computed, watch, onUnmounted } from 'vue';
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue';
 import type { RouteLocationNormalized } from 'vue-router';
 import {
     listenerRouteChange,
     removeRouteListener,
 } from '@/utils/route-listener';
 import { useAppStore, useTabBarStore } from '@/store';
+import { HorizontalScrolling } from '@/utils/horizontal-scrolling';
 import tabItem from './tab-item.vue';
 import { AffixInstance } from '@arco-design/web-vue';
 
@@ -47,13 +50,22 @@ listenerRouteChange((route: RouteLocationNormalized) => {
     }
     if (
         !route.meta.noAffix &&
-        !tagList.value.some((tag) => tag.fullPath === route.fullPath)
+            !tagList.value.some((tag) => tag.fullPath === route.fullPath)
     ) {        
         tabBarStore.updateTabList(route);
     }
 }, true);
+        
+const tagsWrapRef = ref<HTMLDivElement>();
+const horizontalScrolling = ref<HorizontalScrolling>();
+onMounted(()=>{
+    if (tagsWrapRef.value) {
+        horizontalScrolling.value = new HorizontalScrolling(tagsWrapRef.value);
+    }
+});
 
 onUnmounted(() => {
+    horizontalScrolling.value?.destroy();
     removeRouteListener();
 });
 </script>
@@ -65,7 +77,6 @@ onUnmounted(() => {
 
     .tab-bar-box {
         display: flex;
-        padding: 0 0 0 20px;
         background-color: var(--color-bg-2);
         border-bottom: 1px solid var(--color-border);
 
@@ -73,9 +84,43 @@ onUnmounted(() => {
             height: 32px;
             flex: 1;
             overflow: hidden;
+            position: relative;
+
+            .scroll-left,
+            .scroll-right {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                width: 20px;
+                height: 100%;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 1;
+                background-color: var(--color-bg-2);
+                color: var(--color-text-1);
+                display: none;
+            }
+
+            .scroll-left {
+                left: 0;
+                &.isStart {
+                    color: var(--color-text-2);
+                    cursor: not-allowed;
+                }
+            }
+
+            .scroll-right {
+                right: 0;
+                &.isEnd {
+                    color: var(--color-text-2);
+                    cursor: not-allowed;
+                }
+            }
 
             .tags-wrap {
-                padding: 4px 0;
+                padding: 4px 20px;
                 height: 48px;
                 white-space: nowrap;
                 overflow-x: auto;
