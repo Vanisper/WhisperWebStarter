@@ -41,6 +41,14 @@ const useAppStore = defineStore('tabBar', {
 
     actions: {
         updateTabList(route: RouteLocationNormalized) {
+            const currFullPath = route.fullPath;
+            const routeMatched = route.matched;
+            const targetRoute = routeMatched.filter((item) => item.path === currFullPath);
+            if (targetRoute.length > 0) {
+                // 将匹配到的meta信息 替换route中的meta信息 防止父级meta污染
+                route.meta = targetRoute[0].meta;
+            }
+            
             if (BAN_LIST.includes(route.name as string)) return;
             
             const tag = formatTag(route);
