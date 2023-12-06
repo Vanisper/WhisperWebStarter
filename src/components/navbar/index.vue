@@ -129,6 +129,22 @@
           </a-button>
         </a-tooltip>
       </li>
+      <li>
+        <a-tooltip
+          content="锁屏"
+        >
+          <a-button
+            class="nav-btn"
+            type="outline"
+            :shape="'circle'"
+            @click="useLockscreen.setLock(true)"
+          >
+            <template #icon>
+              <icon-lock />
+            </template>
+          </a-button>
+        </a-tooltip>
+      </li>
       <li v-if="appStore.layoutSetting">
         <a-tooltip :content="$t('settings.title')">
           <a-button
@@ -195,7 +211,7 @@
 import { computed, ref, inject } from 'vue';
 import { Message } from '@arco-design/web-vue';
 import { useDark, useToggle, useFullscreen } from '@vueuse/core';
-import { useAppStore, useUserStore } from '@/store';
+import { useAppStore, useUserStore, useLockscreenStore } from '@/store';
 import { LOCALE_OPTIONS } from '@/plugins/locale';
 import useLocale from '@/hooks/locale';
 import useUser from '@/hooks/user';
@@ -207,6 +223,7 @@ import projectConfig from '@/config/project';
 
 const appStore = useAppStore();
 const userStore = useUserStore();
+const useLockscreen = useLockscreenStore();
 const { logout } = useUser();
 const { changeLocale, currentLocale } = useLocale();
 const { isFullscreen, toggle: toggleFullScreen } = useFullscreen();
