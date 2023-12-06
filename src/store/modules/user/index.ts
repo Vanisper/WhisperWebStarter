@@ -9,6 +9,7 @@ import { setToken, clearToken } from '@/utils/auth';
 import { removeRouteListener } from '@/utils/route-listener';
 import { UserState } from './types';
 import useAppStore from '../app';
+import useTabBarStore from '../tab-bar';
 
 const useUserStore = defineStore('user', {
     persist: true,
@@ -89,10 +90,12 @@ const useUserStore = defineStore('user', {
         },
         logoutCallBack() {
             const appStore = useAppStore();
+            const tabBarStore = useTabBarStore();
             this.resetInfo();
             clearToken();
             removeRouteListener();
             appStore.clearServerMenu();
+            tabBarStore.resetTabList();
         },
         // Logout
         async logout() {
