@@ -53,7 +53,8 @@ export const useBattery = () => {
     });
 
     onMounted(async () => {
-        const BatteryManager: Battery = await (window.navigator as any).getBattery();
+        // 只有localhost 或者 https 网站才能获取到电池信息
+        const BatteryManager: Battery | Record<string, any> = (window.navigator as any).getBattery ? await (window.navigator as any).getBattery() : {};
         updateBattery(BatteryManager);
 
         // 电池充电状态更新时被调用
