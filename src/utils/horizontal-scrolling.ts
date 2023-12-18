@@ -60,6 +60,6 @@ export class HorizontalScrolling {
     }
 
     private init() {
-        if (this.target) this.target.addEventListener('wheel', this.wheelHandler);
+        if (this.target) this.target.addEventListener('wheel', this.wheelHandler, { passive: true });
     }
 }
