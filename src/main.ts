@@ -11,6 +11,7 @@ import { setupArcoVue, setupLocale } from './plugins';
 import '@/assets/style/global.less';
 import '@/assets/style/animation.less';
 import '@/api/interceptor';
+import 'virtual:uno.css';
 
 // // 引入Element Plus
 // import ElementPlus from 'element-plus';

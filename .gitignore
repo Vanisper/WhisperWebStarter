@@ -1,5 +1,5 @@
 node_modules
 dist
 
-components.d.ts
+/components.d.ts
 # pnpm-lock.yaml

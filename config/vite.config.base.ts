@@ -3,6 +3,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import vueJsx from '@vitejs/plugin-vue-jsx';
 import svgLoader from 'vite-svg-loader';
+import UnoCSS from 'unocss/vite';
 import configArcoStyleImportPlugin from './plugin/arcoStyleImport';
 
 // https://vitejs.dev/config/
@@ -10,6 +11,7 @@ export default defineConfig({
     base: './',
     plugins: [
         vue(),
+        UnoCSS(),
         vueJsx(),
         svgLoader({ svgoConfig: {} }),
         configArcoStyleImportPlugin(),
