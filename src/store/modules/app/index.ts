@@ -56,7 +56,16 @@ const useAppStore = defineStore('app', {
                     closable: true,
                 });
                 const { data } = await getMenuList();
-                this.serverMenu = data;
+                this.serverMenu = data.map((item) => {
+                    // NOTE ignoreCache 和 keepAlive 这两个模式是互斥的，将统一处理为 ignoreCache
+                    // 后端采用的是 keepAlive 模式
+                    if (item.meta.keepAlive) {
+                        item.meta.ignoreCache = false;
+                    } else {
+                        item.meta.ignoreCache = true;
+                    }
+                    return item;
+                });
                 notifyInstance = Notification.success({
                     id: 'menuNotice',
                     content: 'success',

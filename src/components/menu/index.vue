@@ -7,8 +7,10 @@ import { useAppStore } from '@/store';
 import { listenerRouteChange } from '@/utils/route-listener';
 import { openWindow, regexUrl } from '@/utils';
 import useMenuTree from './use-menu-tree';
-import usePermission from '@/hooks/permission';
 import { cloneDeep } from 'lodash';
+import { AppRouteRecordRaw } from '@/router/routes/types';
+import iconsData from '@/components/icon/data';
+import { Message } from '@arco-design/web-vue';
 
 export default defineComponent({
     emit: ['collapse'],
@@ -21,10 +23,9 @@ export default defineComponent({
     setup(props) {
         const { t } = useI18n();
         const appStore = useAppStore();
-        const permission = usePermission();
         const router = useRouter();
         const route = useRoute();
-        const { menuTree: tMenuTree } = useMenuTree();
+        const { menuTree: tMenuTree, menuTreeTravel } = useMenuTree();
         const collapsed = computed({
             get() {
                 if (appStore.device === 'desktop') return appStore.menuCollapse;
@@ -39,54 +40,7 @@ export default defineComponent({
         const detachedMenu = computed(() => appStore.detachedMenu);
         const openKeys = ref<string[]>([]);
         const selectedKey = ref<string[]>([]);
-        function menuTreeTravel(_routes: RouteRecordRaw[], layer: number) {
-            if (!_routes) return null;
-            const collector: any = _routes.map((element) => {
-                // no access
-                if (!permission.accessRouter(element)) {
-                    return null;
-                }
-                
-                if (element.meta?.single && element.children?.length) {
-                    return {
-                        ...element,
-                        name: element.children[0].name,
-                        // children: element.meta.hideChildrenInMenu ? [] : element.children,
-                        children: [] // single单菜单模式下 不显示子菜单
-                    };
-                }
-                // leaf node
-                if (element.meta?.hideChildrenInMenu || !element.children || !element.children.length) {
-                    element.children = [];
-                    return element;
-                }
 
-                // route filter hideInMenu true
-                element.children = element.children.filter(
-                    (x) => x.meta?.hideInMenu !== true
-                );
-
-                // Associated child node
-                const subItem = menuTreeTravel(element.children, layer + 1);
-
-                if (subItem.length) {
-                    element.children = subItem;
-                    return element;
-                }
-                // the else logic
-                if (layer > 1) {
-                    element.children = subItem;
-                    return element;
-                }
-
-                if (element.meta?.hideInMenu === false) {
-                    return element;
-                }
-
-                return null;
-            });
-            return collector.filter(Boolean);
-        }
         const routeMatched = computed(() => {
             const copyRouter = cloneDeep(route.matched) as RouteRecordNormalized[];
             copyRouter.sort((a: RouteRecordNormalized, b: RouteRecordNormalized) => {
@@ -109,24 +63,31 @@ export default defineComponent({
             return tMenuTree.value;
         });
 
-        const goto = (item: RouteRecordRaw) => {
-            // Open external link
-            if (regexUrl.test(item.path)) {
+        const goto = async (item: RouteRecordRaw) => {
+            // Open external link 外部链接
+            if (regexUrl.test(item.path) || item.meta?.internalOrExternal) {
                 openWindow(item.path);
                 selectedKey.value = [item.name as string];
                 return;
             }
             if (!item.meta) item.meta = {} as RouteMeta;
             // Eliminate external link side effects
-            const { hideInMenu, activeMenu } = item.meta as RouteMeta;
-            if (route.name === item.name && !hideInMenu && !activeMenu) {
+            const { hideInMenu, hideMenu, activeMenu } = item.meta as RouteMeta;
+            if (route.name === item.name && (!hideInMenu || !hideMenu) && !activeMenu) {
                 selectedKey.value = [item.name as string];
                 return;
             }
+
             // Trigger router change
-            router.push({
-                name: item.name,
-            });
+            try {
+                const temp = item as AppRouteRecordRaw;
+                await router.push({
+                    name: temp.name,
+                    params: temp.params || {},
+                });
+            } catch (error: any) {
+                Message.error('跳转失败: ' + error.message);
+            }
         };
         const findMenuOpenKeys = (target: string) => {
             const result: string[] = [];
@@ -150,8 +111,8 @@ export default defineComponent({
             return result;
         };
         listenerRouteChange((newRoute) => {
-            const { requiresAuth, activeMenu, hideInMenu } = newRoute.meta;
-            if (requiresAuth && (!hideInMenu || activeMenu)) {
+            const { requiresAuth, activeMenu, hideInMenu, hideMenu } = newRoute.meta;
+            if (requiresAuth && (!hideInMenu || !hideMenu || activeMenu)) {
                 const menuOpenKeys = findMenuOpenKeys((activeMenu || newRoute.name) as string);  // 这里得到当前路由从根节点到当前节点的所有节点的name
                 
                 const keySet = new Set([...menuOpenKeys, ...openKeys.value]);
@@ -177,8 +138,9 @@ export default defineComponent({
                 if (_route) {
                     _route.forEach((element) => {
                         // This is demo, modify nodes as needed
-                        const icon = element?.meta?.icon
+                        const icon = element?.meta?.icon ? !iconsData.includes(element?.meta?.icon)
                             ? () => h(compile(`<${element?.meta?.icon}/>`))
+                            : () => h(compile(`<div class="i-${element?.meta?.icon}" />`))
                             : null;
                         const node = element?.children && element?.children.length !== 0 ? (
                             <a-sub-menu

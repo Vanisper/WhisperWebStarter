@@ -46,8 +46,8 @@ import { useTabBarStore } from '@/store';
 import type { TagProps } from '@/store/modules/tab-bar/types';
 import { DEFAULT_ROUTE_NAME } from '@/router/constants';
 import PageEnum from '@/enum/page';
+import { Message } from '@arco-design/web-vue';
 
-// eslint-disable-next-line no-shadow
 enum Eaction {
     reload = 'reload',
     current = 'current',
@@ -74,8 +74,12 @@ const router = useRouter();
 const route = useRoute();
 const tabBarStore = useTabBarStore();
 
-const goto = (tag: TagProps) => {        
-    router.push({ ...tag });
+const goto = async (tag: TagProps) => {        
+    try {
+        await router.push({ ...tag });
+    } catch (error: any) {
+        Message.error('路由跳转失败:' + error.message);
+    }
 };
 const tagList = computed(() => {
     return tabBarStore.getTabList;

@@ -10,6 +10,16 @@
         "typescriptreact",
     ],
     "editor.formatOnSave": true,
-    "typescript.tsdk": "node_modules/typescript/lib"
+    "typescript.tsdk": "node_modules/typescript/lib",
     // "vue.features.codeActions.enable": false
+    "todo-tree.general.tags": [
+        "README",
+        "BUG",
+        "HACK",
+        "FIXME",
+        "TODO",
+        "NOTE",
+        "REVIEW",
+    ],
+    "todo-tree.highlights.customHighlight": {}
 }
